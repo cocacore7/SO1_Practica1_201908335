@@ -6,6 +6,8 @@ import (
 	"fmt"
 	"github.com/gorilla/mux"
 	"github.com/rs/cors"
+	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 	"io/ioutil"
@@ -15,9 +17,16 @@ import (
 )
 
 type Valores struct {
-	Primero   float64 `json:"Primero"`
-	Segundo   float64 `json:"Segundo"`
-	Operacion string  `json:"Operacion"`
+	Valores []Valor `json:"Operaciones"`
+}
+
+type Valor struct {
+	ID        primitive.ObjectID `bson:"_id"`
+	Primero   float64            `bson:"Primero"`
+	Segundo   float64            `bson:"Segundo"`
+	Operacion string             `bson:"Operacion"`
+	Resultado float64            `bson:"Resultado"`
+	Fecha     time.Time          `bson:"Fecha"`
 }
 
 var collection *mongo.Collection
@@ -27,15 +36,16 @@ func main() {
 	router := mux.NewRouter()
 
 	router.HandleFunc("/ObtenerOperacion", ObtenerOperacion).Methods("POST")
+	router.HandleFunc("/RegresarOperaciones", MandarOperaciones).Methods("GET")
 
 	handler := cors.Default().Handler(router)
 	log.Fatal(http.ListenAndServe(":3000", handler))
 }
 
 func ObtenerOperacion(w http.ResponseWriter, r *http.Request) {
-	var valores Valores
-	var resultado float64
+	var valores Valor
 
+	//Traer informacion De Frontend Y Transformarla a struct
 	body, err := ioutil.ReadAll(r.Body)
 	if err != nil {
 		_, _ = fmt.Fprintf(w, "Error al insertar")
@@ -45,41 +55,86 @@ func ObtenerOperacion(w http.ResponseWriter, r *http.Request) {
 	_ = json.Unmarshal(body, &valores)
 	_ = json.NewEncoder(w).Encode(valores)
 
+	//Calcular operaciones y obtener tiempo actual
 	if valores.Operacion == "+" {
-		resultado = valores.Primero + valores.Segundo
+		valores.Resultado = valores.Primero + valores.Segundo
 	}
 	if valores.Operacion == "-" {
-		resultado = valores.Primero - valores.Segundo
+		valores.Resultado = valores.Primero - valores.Segundo
 	}
 	if valores.Operacion == "*" {
-		resultado = valores.Primero * valores.Segundo
+		valores.Resultado = valores.Primero * valores.Segundo
 	}
 	if valores.Operacion == "/" {
 		if int(valores.Segundo) != 0 {
-			resultado = valores.Primero / valores.Segundo
+			valores.Resultado = valores.Primero / valores.Segundo
 		} else {
-			resultado = -0.000001
+			valores.Resultado = -0.000001
 		}
 	}
-	t := time.Now()
-	fecha := fmt.Sprintf("%d-%02d-%02dT%02d:%02d:%02d", t.Year(), t.Month(), t.Day(), t.Hour(), t.Minute(), t.Second())
 
+	//Convertir objeto a almacenar en coleccion
+	operacion := bson.D{{"Primero", valores.Primero},
+		{"Segundo", valores.Segundo},
+		{"Operacion", valores.Operacion},
+		{"Resultado", valores.Resultado},
+		{"Fecha", time.Now()}}
+
+	//Conectar con mongodb
 	clientOptions := options.Client().ApplyURI("mongodb://localhost:27017/")
 	client, err := mongo.Connect(ctx, clientOptions)
 	if err != nil {
 		log.Fatal(err)
 	}
-	err = client.Ping(ctx, nil)
+
+	//Crear colleccion y base de datos si no existen y registrar en coleccion
+	collection = client.Database("SO1_Practica1").Collection("Operaciones")
+	result, err := collection.InsertOne(context.TODO(), operacion)
+	if err != nil {
+		panic(err)
+	}
+
+	fmt.Println(result.InsertedID)
+	fmt.Println()
+}
+
+func MandarOperaciones(w http.ResponseWriter, _ *http.Request) {
+	//Conectar con mongodb
+	clientOptions := options.Client().ApplyURI("mongodb://localhost:27017/")
+	client, err := mongo.Connect(ctx, clientOptions)
 	if err != nil {
 		log.Fatal(err)
 	}
 
+	//Crear colleccion y base de datos si no existen y registrar en coleccion
 	collection = client.Database("SO1_Practica1").Collection("Operaciones")
 
-	println(valores.Primero)
-	println(valores.Operacion)
-	println(valores.Segundo)
-	println(resultado)
-	println(fecha)
-	println()
+	//Traer todos los registros de coleccion
+	filter := bson.D{}
+	cursor, err := collection.Find(context.TODO(), filter)
+	if err != nil {
+		panic(err)
+	}
+
+	//Convierte todos los datos en bson
+	var results []bson.M
+	if err = cursor.All(context.TODO(), &results); err != nil {
+		panic(err)
+	}
+
+	//Convierte datos bson en arreglo de operaciones para devolver a front como json
+	var regreso Valores
+	regreso.Valores = make([]Valor, len(results))
+	w.Header().Set("Content-Type", "applicattion/json")
+	w.WriteHeader(http.StatusAccepted)
+	//Imprime todos los resultados
+	for x, result := range results {
+		var operacion Valor
+		bsonBytes, _ := bson.Marshal(result)
+		bson.Unmarshal(bsonBytes, &operacion)
+		regreso.Valores[x] = operacion
+	}
+
+	//Codifica struct regreso en json
+	_ = json.NewEncoder(w).Encode(regreso)
 }
