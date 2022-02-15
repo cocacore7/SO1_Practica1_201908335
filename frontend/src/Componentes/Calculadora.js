@@ -5,8 +5,9 @@ import CssBaseline from '@mui/material/CssBaseline';
 import Container from '@mui/material/Container';
 import TextField from '@mui/material/TextField';
 import MenuItem from '@mui/material/MenuItem';
-import axios from "axios"
-import '../css/Calculadora.css'
+import NavBar from '../Componentes/NavBar.js';
+import '../css/Calculadora.css';
+import axios from "axios";
 
 const operaciones = [
   {
@@ -27,7 +28,7 @@ const operaciones = [
   },
 ];
 
-function Calculadora() {
+export default function Calculadora() {
     const [primero, setPrimero] = React.useState('0');
     const [segundo, setSegundo] = React.useState('0');
     const [operacion, setOperacion] = React.useState('+');
@@ -50,7 +51,6 @@ function Calculadora() {
         "Segundo": parseFloat(segundo),
         "Operacion": operacion
       }
-      console.log(Valores)
       await axios.post("http://localhost:3000/ObtenerOperacion",Valores)
     }
 
@@ -59,7 +59,8 @@ function Calculadora() {
           <React.Fragment>
           <CssBaseline />
           <Container maxWidth="sm">
-            <br/><br/><br/><br/><br/><br/><br/><br/><br/>
+          <NavBar value="Calculadora"/>
+            <br/><br/><br/><br/>
             <Box sx={{ bgcolor: '#828282', width:300, heigth:600, mx: 'auto', p:2}} > 
               <TextField id="primero" color="success" helperText="Ingrese Primer Numero" value={primero} onChange={CambiarPrimero} focused/><br/><br/>
     
@@ -77,5 +78,3 @@ function Calculadora() {
         </div>
     );
 }
-
-export default Calculadora;
