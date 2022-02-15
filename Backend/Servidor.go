@@ -1,10 +1,13 @@
 package main
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"github.com/gorilla/mux"
 	"github.com/rs/cors"
+	"go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/mongo/options"
 	"io/ioutil"
 	"log"
 	"net/http"
@@ -16,6 +19,9 @@ type Valores struct {
 	Segundo   float64 `json:"Segundo"`
 	Operacion string  `json:"Operacion"`
 }
+
+var collection *mongo.Collection
+var ctx = context.TODO()
 
 func main() {
 	router := mux.NewRouter()
@@ -57,6 +63,18 @@ func ObtenerOperacion(w http.ResponseWriter, r *http.Request) {
 	}
 	t := time.Now()
 	fecha := fmt.Sprintf("%d-%02d-%02dT%02d:%02d:%02d", t.Year(), t.Month(), t.Day(), t.Hour(), t.Minute(), t.Second())
+
+	clientOptions := options.Client().ApplyURI("mongodb://localhost:27017/")
+	client, err := mongo.Connect(ctx, clientOptions)
+	if err != nil {
+		log.Fatal(err)
+	}
+	err = client.Ping(ctx, nil)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	collection = client.Database("SO1_Practica1").Collection("Operaciones")
 
 	println(valores.Primero)
 	println(valores.Operacion)
