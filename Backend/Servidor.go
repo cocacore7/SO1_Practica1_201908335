@@ -2,76 +2,66 @@ package main
 
 import (
 	"encoding/json"
-	"log"
-	"net/http"
-
+	"fmt"
 	"github.com/gorilla/mux"
 	"github.com/rs/cors"
+	"io/ioutil"
+	"log"
+	"net/http"
+	"time"
 )
+
+type Valores struct {
+	Primero   float64 `json:"Primero"`
+	Segundo   float64 `json:"Segundo"`
+	Operacion string  `json:"Operacion"`
+}
 
 func main() {
 	router := mux.NewRouter()
 
-	router.HandleFunc("/ObtenerSuma", ObtenerSuma).Methods("GET")
-	router.HandleFunc("/EnviarSuma", EnviarSuma).Methods("POST")
-
-	router.HandleFunc("/ObtenerResta", ObtenerResta).Methods("GET")
-	router.HandleFunc("/EnviarResta", EnviarResta).Methods("POST")
-
-	router.HandleFunc("/ObtenerMultiplicacion", ObtenerMultiplicacion).Methods("GET")
-	router.HandleFunc("/EnviarMultiplicacion", EnviarMultiplicacion).Methods("POST")
-
-	router.HandleFunc("/ObtenerDivision", ObtenerDivision).Methods("GET")
-	router.HandleFunc("/EnviarDivision", EnviarDivision).Methods("POST")
+	router.HandleFunc("/ObtenerOperacion", ObtenerOperacion).Methods("POST")
 
 	handler := cors.Default().Handler(router)
 	log.Fatal(http.ListenAndServe(":3000", handler))
 }
 
-func ObtenerSuma(w http.ResponseWriter, _ *http.Request) {
-	w.Header().Set("Content-Type", "applicattion/json")
-	w.WriteHeader(http.StatusAccepted)
-	_ = json.NewEncoder(w).Encode("Datos Suma Recibidos")
-}
+func ObtenerOperacion(w http.ResponseWriter, r *http.Request) {
+	var valores Valores
+	var resultado float64
 
-func EnviarResta(w http.ResponseWriter, _ *http.Request) {
+	body, err := ioutil.ReadAll(r.Body)
+	if err != nil {
+		_, _ = fmt.Fprintf(w, "Error al insertar")
+	}
 	w.Header().Set("Content-Type", "applicattion/json")
 	w.WriteHeader(http.StatusCreated)
-	_ = json.NewEncoder(w).Encode("Enviar Suma")
-}
+	_ = json.Unmarshal(body, &valores)
+	_ = json.NewEncoder(w).Encode(valores)
 
-func ObtenerResta(w http.ResponseWriter, _ *http.Request) {
-	w.Header().Set("Content-Type", "applicattion/json")
-	w.WriteHeader(http.StatusAccepted)
-	_ = json.NewEncoder(w).Encode("Datos Resta Recibidos")
-}
+	if valores.Operacion == "+" {
+		resultado = valores.Primero + valores.Segundo
+	}
+	if valores.Operacion == "-" {
+		resultado = valores.Primero - valores.Segundo
+	}
+	if valores.Operacion == "*" {
+		resultado = valores.Primero * valores.Segundo
+	}
+	if valores.Operacion == "/" {
+		if int(valores.Segundo) != 0 {
+			resultado = valores.Primero / valores.Segundo
+		} else {
+			resultado = -0.000001
+		}
+	}
+	t := time.Now()
+	fecha := fmt.Sprintf("%d-%02d-%02dT%02d:%02d:%02d", t.Year(), t.Month(), t.Day(), t.Hour(), t.Minute(), t.Second())
 
-func EnviarMultiplicacion(w http.ResponseWriter, _ *http.Request) {
-	w.Header().Set("Content-Type", "applicattion/json")
-	w.WriteHeader(http.StatusCreated)
-	_ = json.NewEncoder(w).Encode("Enviar Suma")
-}
-
-func ObtenerMultiplicacion(w http.ResponseWriter, _ *http.Request) {
-	w.Header().Set("Content-Type", "applicattion/json")
-	w.WriteHeader(http.StatusAccepted)
-	_ = json.NewEncoder(w).Encode("Datos Multiplicacion Recibidos")
-}
-
-func EnviarDivision(w http.ResponseWriter, _ *http.Request) {
-	w.Header().Set("Content-Type", "applicattion/json")
-	w.WriteHeader(http.StatusCreated)
-	_ = json.NewEncoder(w).Encode("Enviar Suma")
-}
-
-func ObtenerDivision(w http.ResponseWriter, _ *http.Request) {
-	w.Header().Set("Content-Type", "applicattion/json")
-	w.WriteHeader(http.StatusAccepted)
-	_ = json.NewEncoder(w).Encode("Datos Division Recibidos")
-}
-
-func EnviarSuma(w http.ResponseWriter, _ *http.Request) {
-	w.Header().Set("Content-Type", "applicattion/json")
-	w.WriteHeader(http.StatusCreated)
-	_ = json.NewEncoder(w).Encode("Enviar Suma")
+	println(valores.Primero)
+	println(valores.Operacion)
+	println(valores.Segundo)
+	println(resultado)
+	println(fecha)
+	println()
 }
