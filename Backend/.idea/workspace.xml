@@ -7,6 +7,16 @@
     <list default="true" id="5ebc5f66-017b-4c8b-acd2-b55410c13a38" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Servidor.go" beforeDir="false" afterPath="$PROJECT_DIR$/Servidor.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Contenedor Mongo Con Volumen.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../DBVolumenes/WiredTiger.turtle" beforeDir="false" afterPath="$PROJECT_DIR$/../DBVolumenes/WiredTiger.turtle" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../DBVolumenes/WiredTiger.wt" beforeDir="false" afterPath="$PROJECT_DIR$/../DBVolumenes/WiredTiger.wt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../DBVolumenes/collection-2--4224337388113256633.wt" beforeDir="false" afterPath="$PROJECT_DIR$/../DBVolumenes/collection-2--4224337388113256633.wt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../DBVolumenes/collection-4--4224337388113256633.wt" beforeDir="false" afterPath="$PROJECT_DIR$/../DBVolumenes/collection-4--4224337388113256633.wt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../DBVolumenes/index-3--4224337388113256633.wt" beforeDir="false" afterPath="$PROJECT_DIR$/../DBVolumenes/index-3--4224337388113256633.wt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../DBVolumenes/index-5--4224337388113256633.wt" beforeDir="false" afterPath="$PROJECT_DIR$/../DBVolumenes/index-5--4224337388113256633.wt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../DBVolumenes/index-6--4224337388113256633.wt" beforeDir="false" afterPath="$PROJECT_DIR$/../DBVolumenes/index-6--4224337388113256633.wt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../DBVolumenes/journal/WiredTigerLog.0000000002" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../DBVolumenes/sizeStorer.wt" beforeDir="false" afterPath="$PROJECT_DIR$/../DBVolumenes/sizeStorer.wt" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -61,5 +71,16 @@
   </component>
   <component name="VgoProject">
     <integration-enabled>true</integration-enabled>
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" type="DlvLineBreakpoint">
+          <url>file://$PROJECT_DIR$/Servidor.go</url>
+          <line>139</line>
+          <option name="timeStamp" value="1" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
   </component>
 </project>

@@ -4,16 +4,17 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"io/ioutil"
+	"log"
+	"net/http"
+	"time"
+
 	"github.com/gorilla/mux"
 	"github.com/rs/cors"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
-	"io/ioutil"
-	"log"
-	"net/http"
-	"time"
 )
 
 type Valores struct {
@@ -81,7 +82,7 @@ func ObtenerOperacion(w http.ResponseWriter, r *http.Request) {
 		{"Fecha", time.Now()}}
 
 	//Conectar con mongodb
-	clientOptions := options.Client().ApplyURI("mongodb://localhost:27017/")
+	clientOptions := options.Client().ApplyURI("mongodb://192.168.0.7:27017")
 	client, err := mongo.Connect(ctx, clientOptions)
 	if err != nil {
 		log.Fatal(err)
@@ -97,7 +98,7 @@ func ObtenerOperacion(w http.ResponseWriter, r *http.Request) {
 
 func MandarOperaciones(w http.ResponseWriter, _ *http.Request) {
 	//Conectar con mongodb
-	clientOptions := options.Client().ApplyURI("mongodb://localhost:27017/")
+	clientOptions := options.Client().ApplyURI("mongodb://192.168.0.7:27017")
 	client, err := mongo.Connect(ctx, clientOptions)
 	if err != nil {
 		log.Fatal(err)
