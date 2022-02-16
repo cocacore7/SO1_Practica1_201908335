@@ -1,0 +1,1 @@
+docker run -d -p 27017:27017 -v C:\Users\cocac\Documents\GitHub\SO1_Practica1_201908335\DBVolumenes:/data/db --name dbmongo mongo

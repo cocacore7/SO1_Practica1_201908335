@@ -89,13 +89,10 @@ func ObtenerOperacion(w http.ResponseWriter, r *http.Request) {
 
 	//Crear colleccion y base de datos si no existen y registrar en coleccion
 	collection = client.Database("SO1_Practica1").Collection("Operaciones")
-	result, err := collection.InsertOne(context.TODO(), operacion)
+	_, err = collection.InsertOne(context.TODO(), operacion)
 	if err != nil {
 		panic(err)
 	}
-
-	fmt.Println(result.InsertedID)
-	fmt.Println()
 }
 
 func MandarOperaciones(w http.ResponseWriter, _ *http.Request) {
@@ -131,7 +128,10 @@ func MandarOperaciones(w http.ResponseWriter, _ *http.Request) {
 	for x, result := range results {
 		var operacion Valor
 		bsonBytes, _ := bson.Marshal(result)
-		bson.Unmarshal(bsonBytes, &operacion)
+		err = bson.Unmarshal(bsonBytes, &operacion)
+		if err != nil {
+			return
+		}
 		regreso.Valores[x] = operacion
 	}
 
