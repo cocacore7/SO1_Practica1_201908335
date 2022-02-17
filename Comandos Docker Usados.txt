@@ -4,8 +4,16 @@ docker run -d -p 27017:27017 -v C:\Users\cocac\Documents\GitHub\SO1_Practica1_20
 
 docker build -t backend_practica1_so1 .
 
+docker tag backend_practica1_so1 cocacore7/backend_p1_201908335
+
+docker push cocacore7/backend_p1_201908335
+
 docker run -d -p 3000:3000 --name backend_practica1_so1 backend_practica1_so1
 
 docker build -t frontend_practica1_so1 .
 
 docker run -d -p 4200:4200 --name frontend_practica1_so1 frontend_practica1_so1
+
+docker-compose up -d
+
+docker-compose down
