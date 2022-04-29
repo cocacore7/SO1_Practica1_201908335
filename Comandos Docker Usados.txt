@@ -2,13 +2,13 @@ docker pull mongo
 
 docker run -d -p 27017:27017 -v C:\Users\cocac\Documents\GitHub\SO1_Practica1_201908335\DBVolumenes:/data/db --name dbmongo  mongo
 
-docker build -t backend_practica1_so1 .
+docker build -t api_proyecto1_so1 .
 
-docker tag backend_practica1_so1 cocacore7/backend_p1_201908335
+docker tag api_proyecto1_so1 cocacore7/api_proyecto1_201908335
 
-docker push cocacore7/backend_p1_201908335
+docker push cocacore7/api_proyecto1_201908335
 
-docker run -d -p 3000:3000 --name backend_practica1_so1 backend_practica1_so1
+docker run -d -p 5000:5000 -e VM_NAME=VM2 --name api_proyecto1_201908335 cocacore7/api_proyecto1_201908335
 
 docker build -t frontend_practica1_so1 .
 
@@ -17,3 +17,43 @@ docker run -d -p 4200:4200 --name frontend_practica1_so1 frontend_practica1_so1
 docker-compose up -d
 
 docker-compose down
+
+
+docker build -t client-go .
+
+docker tag client-go cocacore7/client_go_201908335
+
+docker login
+
+docker push cocacore7/client_go_201908335
+
+docker run -d -p 3000:3000 --name client-go cocacore7/client_go_201908335
+
+docker run -d -p 3000:3000 --name client-go client-go
+
+
+
+docker build -t server_node .
+
+docker tag server_node cocacore7/server_node_201908335
+
+docker login
+
+docker push cocacore7/server_node_201908335
+
+docker run -d -p 50051:50051 --name server_node server_node
+
+docker run -d -p 50051:50051 --name server_node cocacore7/server_node_201908335
+
+
+docker build -t suscriber_go_rabbit .
+
+docker tag suscriber_go_rabbit cocacore7/suscriber_go_rabbit_201908335
+
+docker login
+
+docker push cocacore7/suscriber_go_rabbit_201908335
+
+docker run -d --name suscriber_go_rabbit cocacore7/suscriber_go_rabbit_201908335
+
+docker run -d --name suscriber_go_rabbit suscriber_go_rabbit

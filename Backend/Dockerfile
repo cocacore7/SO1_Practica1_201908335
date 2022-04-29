@@ -1,4 +1,4 @@
-FROM golang:1.17
+FROM golang:1.16
 WORKDIR /Backend
 COPY . .
 RUN go env -w GO111MODULE=off
