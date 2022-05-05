@@ -27,10 +27,14 @@ docker login
 
 docker push cocacore7/client_go_201908335
 
-docker run -d -p 3000:3000 --name client-go cocacore7/client_go_201908335
+docker run -d -p 4000:3000 --name client-go -e GRCP_SERVER="192.168.0.10:50051" cocacore7/client_go_201908335
+
+docker run -d -p 4000:3000 --name clientgrcp -e GRCP_SERVER="192.168.0.10:50051" amacario502/clientgrcp
 
 docker run -d -p 3000:3000 --name client-go client-go
 
+
+docker run -d -p 4000:4000 --name run_front gersonquinia/run_front
 
 
 docker build -t server_node .
@@ -43,7 +47,9 @@ docker push cocacore7/server_node_201908335
 
 docker run -d -p 50051:50051 --name server_node server_node
 
-docker run -d -p 50051:50051 --name server_node cocacore7/server_node_201908335
+docker run -d -p 50051:50051 --name server_node -e ADD_RABBIT="192.168.0.10:9092" cocacore7/server_node_201908335
+
+docker run -d -p 50051:50051 --name servergrcp -e ADD_KAFKA="localhost:9092" amacario502/servergrcp_201905837
 
 
 docker build -t suscriber_go_rabbit .
